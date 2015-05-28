@@ -1,0 +1,11 @@
+.xblock_block .count {
+    font-weight: bold;
+}
+
+.xblock_block p {
+    cursor: pointer;
+}
+
+.printError {
+    color: #ae0a0a;
+}

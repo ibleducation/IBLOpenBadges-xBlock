@@ -1,0 +1,46 @@
+<div class="xblock_block">
+<p>
+ <b>Debug:</b><br>
+ Anon User ID: <b>{self.n_user_id}</b><br>
+ Real User ID : <b>{self.claim_db_user_id}</b><br>
+ User Name : <b>{self.claim_db_user_name}</b><br>
+ User Email : <b>{self.claim_db_user_email}</b><br>
+ Course ID : <b>{self.claim_db_user_course}</b><br>
+ Requesting  badge <b>{self.bg_id}</b><br>
+ Badge provider <b>IBLStudiosBadges</b><br>
+ Required Score <b>{self.required_score}</b><br>
+ User Score <b>{self.user_score}</b><br>
+ Text Desc. <b>{self.form_text}</b><br>
+ Text Congrat.<b>{self.congratulations_text}</b><br>
+ Text Not-enough<b>{self.enough_text}</b><br>
+ <hr>
+ <b> Problems : modules for average:</b> <br>
+ {self.claim_db_problems_lists} <br>
+ Problems Badge Score : <b>{self.claim_db_badge_problems_score}</b><br>
+ Partial user_problems_score:<b>{self.claim_db_problems_partial_score}</b><br>
+ Average from total_score:<b>{self.claim_db_problems_total_score}</b><br>
+ Percent user_problems_score:<b>{self.claim_db_problems_percent_score}</b><br>
+ <hr>
+</p>
+ 
+<br>
+<b>Check provider connection:</b><br>
+
+<p>Auth token : <b>{self.claim_prov_access_token}</b><br></p>
+<hr>
+
+<p><br></p>
+
+<div id="frmBadgeShowForm">
+<b>Check Form:</b><br>{self.claim_badge_form}
+</div>
+<hr>
+<div id="frmShowEarn"><b>Check earn:</b><br>{self.check_earned}</div>
+<hr>
+
+<div id="showPreviewBadge"><b>Preview Badge:</b><br>{self.preview_badge}</div>
+<hr>
+
+<div id="resForm" style="display:none"></div>
+
+</div>

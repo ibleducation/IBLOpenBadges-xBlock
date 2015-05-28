@@ -1,0 +1,28 @@
+<div class="xblock_block">
+<p>
+ <b>Debug Info:</b><br>
+ Anon User ID: <b>{self.n_user_id}</b><br>
+ Real User ID : <b>{self.claim_db_user_id}</b><br>
+ User Name : <b>{self.claim_db_user_name}</b><br>
+ User Email : <b>{self.claim_db_user_email}</b><br>
+ Course ID : <b>{self.claim_db_user_course}</b><br>
+ Requesting  badge <b>{self.bg_id}</b><br>
+ Badge provider <b>IBLStudiosBadges</b><br>
+ Required Score <b>{self.required_score}</b><br>
+ User Score <b>{self.user_score}</b><br>
+ Text <b>{self.form_text}</b><br>
+
+<br>Conecting to badgeprovider ...<br>
+<p>
+Auth token : <b>{self.claim_prov_access_token}</b><br>
+</p>
+<hr>
+<p>
+
+<div id="frmBadgeShowErrors">
+    <h1 class="printError">Error</h1>
+    <p class="printError">{self.claim_badge_errors}</p>
+</div>
+
+</p>
+</div>
