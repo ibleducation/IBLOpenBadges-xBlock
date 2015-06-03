@@ -4,7 +4,7 @@ import MySQLdb
 
 class mysql:
     """
-    MySQL class provides easy
+    MySQL class provides easy 
     interaction with MySQL databases
     """
     def __init__(self, db_host, db_port, db_name, db_user, db_pass):
@@ -15,24 +15,24 @@ class mysql:
         self.db_name = db_name
         self.dbh = None
 
-    """ Connect to the database """
     def connect(self):
+        """ Connect to the database """
         if self.dbh == None:
-            self.dbh = MySQLdb.connect(host=self.db_host, user=self.db_user, passwd=self.db_pass, db=self.db_name)
+            self.dbh = MySQLdb.connect(host=self.db_host, user=self.db_user, passwd=self.db_pass, db=self.db_name, charset='utf8', use_unicode=1)
 
-    """ Execute a query """
     def query(self, query):
+        """ Exectue a query """
         self.connect()
         self.cur = self.dbh.cursor()
         self.res = self.cur.execute(query)
         return self.res
 
-    """ Return the number of results """
     def numrows(self):
+        """ Return the num of results """
         return self.cur.rowcount
 
-    """ Fetch all results """
     def fetchall(self):
+        """ Fetchall results """
         return self.cur.fetchall()
 
     def showConfig(self):
@@ -42,6 +42,6 @@ class mysql:
         result += "db_pass : %s" % (self.db_pass)
         return result
 
-    """ Close database connection """
     def disconnect(self):
+        """ Closing database connection """
         self.dbh.close()

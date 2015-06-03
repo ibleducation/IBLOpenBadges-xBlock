@@ -1,10 +1,9 @@
-import sys, os
+
+
+import sys
+import os
+import requests
 import json
-
-import requests, urllib, pycurl
-
-from StringIO import StringIO
-
 
 class IBLOpenBadges:
     """ Create a Badge Object """
@@ -17,8 +16,9 @@ class IBLOpenBadges:
         self.evidences = []
         self.image = None
 
-""" Convert dict to query-string """
 def convert_dict2querystring(dict):
+    """ Convert dict to query-string """
+    import urllib
     text = ''
     count = 0
     for i in dict:
@@ -28,15 +28,15 @@ def convert_dict2querystring(dict):
         count += 1
     return text
 
-"""
-Get Auth Token to authenticate transactions
-
-Keyword arguments:
-purl -- the server url to get the token
-pusr -- the username
-ppwd -- the secret_key
-"""
 def get_auth_token (purl,pusr,ppwd):
+    """
+    Get Auth Token to authenticate transactions
+    
+    Keyword arguments:
+    purl -- the server url to get the token
+    pusr -- the username
+    ppwd -- the secret_key
+    """
     result = ''
     pdata = {'grant_type':'client_credentials'}
     if purl!='' and pusr!='' and ppwd!='':
@@ -49,16 +49,17 @@ def get_auth_token (purl,pusr,ppwd):
                     result = value
     return result
 
-"""
-Ask the server if the badge was earned before
-
-Keyword arguments:
-purl -- the server url to chek earned badges
-ptoken -- the token auth
-uemail -- the user email
-bgid -- the badge id
-"""
 def check_earn_badge (purl,ptoken,uemail,bgid):
+    """ 
+    Ask the server if the badge was earned before
+    
+    Keyword arguments:
+    purl -- the server url to chek earned badges
+    ptoken -- the token auth
+    uemail -- the user email
+    bgid -- the badge id
+    """
+    import json
     pdata   = {'email':uemail, 'id':bgid}
     headers = {'Authorization' : 'Bearer '+ptoken+'' }
     res     = requests.post(purl, data=pdata, headers=headers)
@@ -70,30 +71,31 @@ def check_earn_badge (purl,ptoken,uemail,bgid):
                 return data
     return result
 
-"""
-Retry badge information from external server
-
-Keyword arguments:
-purl -- the server url to get data
-ptoken -- the token auth
-bgid -- the badge id
-datatype -- the type of data to retry (default info)
-"""
 def get_badge_data (purl,ptoken,bgid,datatype='info'):
+    """
+    Retry badge information from external server
+    
+    Keyword arguments:
+    purl -- the server url to get data
+    ptoken -- the token auth
+    bgid -- the badge id
+    datatype -- the type of data to retry (default info)
+    """
     pdata = {'bgid':bgid,'datatype':datatype}
     headers = {'Authorization' : 'Bearer '+ptoken+'' }
     res = requests.post(purl, data=pdata, headers=headers)
     return res.content
 
-"""
-Create the object badge with retrieved data
-
-Keyword arguments:
-jsondata -- the json badge data retrieved
-jsonparams -- the json badge params (evidence) retrieved
-"""
 def create_obj_badge(jsondata,jsonparams):
-    # load data from expected json-formatted data
+    """
+    Create the object badge with retrieved data
+    
+    Keyword arguments:
+    jsondata -- the json badge data retrieved
+    jsonparams -- the json badge params (evidence) retrieved
+    """
+    import json
+    # load data from json expected format data
     jsonData = json.loads(jsondata, object_hook=_decode_dict)
     jsonParams = json.loads(jsonparams, object_hook=_decode_dict)
     # create a new badge object
@@ -114,13 +116,13 @@ def create_obj_badge(jsondata,jsonparams):
         obj_Badge.append(b)
     return obj_Badge
 
-"""
-Build the html form tags for evidences
-
-Keyword arguments:
-data_evidences -- evaulated data from sever response
-"""
 def build_evidences_form(data_evidences):
+    """
+    Build the html form tags for evidences
+    
+    Keyword arguments:
+    data_evidences -- evaulated data from sever response 
+    """
     result = ''
     if data_evidences:
         for evidence in data_evidences:
@@ -149,13 +151,13 @@ def build_evidences_form(data_evidences):
                 result +='</tr><tr><td>&#160;</td></tr>'
     return result
 
-"""
-Build the html to preview the badge to earn
-
-Keyword arguments:
-obj_sel_badge -- badge object
-"""
 def build_badge_preview(obj_sel_badge):
+    """
+    Build the html to preview the badge to earn
+    
+    Keyword arguments:
+    obj_sel_badge -- badge object 
+    """
     view = ''
     if obj_sel_badge and obj_sel_badge[0].id > 0:
         view  = "<table cellpadding=4 cellspacing=4 style='border:solid 1px #333;'>"
@@ -169,19 +171,18 @@ def build_badge_preview(obj_sel_badge):
         view += "</table><br>"
     return view
 
-"""
-Build the html form to claim a new badge
-
-Keyword arguments:
-f_claim_name -- student complete name
-f_claim_mail -- student email
-f_form_text -- label description to present the form
-obj_sel_badge -- badge object
-"""
 def build_badge_form(f_claim_name,f_claim_mail,f_form_text,obj_sel_badge):
-    # iblstudiosbadges_client is only used here
+    """
+    Build the html form to claim a new badge
+    
+    Keyword arguments:
+    f_claim_name -- student complete name
+    f_claim_mail -- student email
+    f_form_text -- label description to present the form
+    obj_sel_badge -- badge object
+    """
+    
     import iblstudiosbadges_client
-
     if obj_sel_badge[0].id > 0:
         # get params (evidence) and construct html
         if obj_sel_badge[0].evidences:
@@ -194,14 +195,11 @@ def build_badge_form(f_claim_name,f_claim_mail,f_form_text,obj_sel_badge):
         f_claim_full_name = f_claim_name.split(' ')
         f_claim_s_first_name = f_claim_full_name[0]
         if len(f_claim_full_name) > 1:
-                f_claim_s_last_name = f_claim_full_name[1:len(f_claim_full_name)]
-                f_claim_s_last_name = f_claim_s_last_name[0]
+                f_claim_s_last_name = f_claim_name[len(f_claim_s_first_name):]
         else:
                 f_claim_s_last_name = '.'
-
-    # Preview the badge to be claimed
+    # Preview the badge to be claim
     form  = iblstudiosbadges_client.build_badge_preview(obj_sel_badge)
-
     # Build complete form to complete the claim process
     form += "<form action='student_claim_save' name='badge_claimer' id='badge_claimer' method='post'>"
     form += '<input type="hidden" name="id" value="%s" requried>' % (obj_sel_badge[0].id)
@@ -218,27 +216,28 @@ def build_badge_form(f_claim_name,f_claim_mail,f_form_text,obj_sel_badge):
     form += "</form>"
     return form
 
-"""
-Prepare data given in the claim form
-to send as querystring request to the server
-
-Keyword arguments:
-app_form_data -- the data retrieved from the claim form
-"""
 def set_form_data_to_award(app_form_data):
+    """
+    Prepare data given in the claim form
+    to send as querystring request to the server
+    
+    Keyword arguments:
+    app_form_data -- the data retrieved from the claim form
+    """
+    import urllib
+    #define vars
     params      = {}
     evidences   = ''
     form        = app_form_data
-
-    # decode some chars for evidence
+    # decode some chars for evidences
     for k,v in form.iteritems():
+        #decode chars for evidences
         v = v.replace('%3A',':')
         v = v.replace('%2F','/')
         v = v.replace('%40','@')
         k = k.replace('%7C','|')
         if v != 'None':
             params[k] = v
-
     # prepare querystring
     data = ''
     if params:
@@ -247,25 +246,26 @@ def set_form_data_to_award(app_form_data):
             data = ("%s") % (data)
     return data
 
-"""
-Claim a new badge
-sending form data to server
-
-Keyword arguments:
-purl -- the server url to claim a badge
-token -- the token auth
-award_data -- the formatted data retrieved from the form
-"""
 def claim_and_award_single_badge(purl,token,award_data):
-    # Provided form data must already be urlencoded.
-
+    """
+    Claim a new badge
+    sending form data to server
+    
+    Keyword arguments:
+    purl -- the server url to claim a badge
+    token -- the token auth
+    award_data -- the formatted data retrieved from the form 
+    """
+    # Form data must be provided already urlencoded.
     # if you use urlencode import urllib
     # postfields = urllib.urlencode(award_data)
     postfields = str(award_data)
-
     result = ''
     if award_data != '':
         # send data using pycurl
+        import pycurl
+        from StringIO import StringIO
+        #send curl data
         c = pycurl.Curl()
         c.setopt(c.URL, purl)
         c.setopt(pycurl.HTTPHEADER, ['Accept: application/json','Authorization: Bearer %s' % str(token)])
@@ -273,11 +273,10 @@ def claim_and_award_single_badge(purl,token,award_data):
         c.setopt(pycurl.SSL_VERIFYHOST, 0)
         c.setopt(c.POSTFIELDS, postfields)
         buffer = StringIO()
-
         # Be aware using python 2.7 and pycurl 7.19.3
-        # use WRITEFUNCTION instead WRITEDATA
-        # version pycurl >= 7.19.3
-        # c.setopt(c.WRITEDATA, buffer)
+        # use WRITEFUNCTION instead WRITEDATA 
+        #version pycurl >= 7.19.3
+        #c.setopt(c.WRITEDATA, buffer)
         # version pycurl <= 7.19.3
         c.setopt(c.WRITEFUNCTION, buffer.write)
         c.perform()
@@ -285,14 +284,14 @@ def claim_and_award_single_badge(purl,token,award_data):
         result = buffer.getvalue()
     return result
 
-"""
-Parse the json data retrieved
-server after claim a new badge
-and try to evaluate if was create.
-If badge_url param exists and is not empty
-the badge was earned successfully
-"""
 def get_award_result(data2parse):
+    """
+    Parse the json data retrieved 
+    server after claim a new badge
+    and try to evaluate if was create.
+    If badge_url param exists and is not empty
+    the badge was earned successfully
+    """
     result = 'error'
     if data2parse != '':
         for key,val in data2parse.iteritems():
@@ -300,14 +299,14 @@ def get_award_result(data2parse):
                 return val
     return result
 
-"""
-Print the result of a claimed badge
-
-Keyword arguments:
-resultdata -- string with two possible results ('error' or the url of the earned badge)
-congratulations -- free text defined in studio view
-"""
 def get_award_result_formatted(resultdata,congratulations):
+    """
+    Print the result of a claimed badge
+    
+    Keyword arguments:
+    resultdata -- string with two possible results ('error' or the url of the earned badge)
+    congratulations -- free text defined in studio view
+    """
     result =''
     if resultdata != 'error':
         claim_uri = resultdata.replace('\/','/')
@@ -321,8 +320,8 @@ def get_award_result_formatted(resultdata,congratulations):
         result +='</div>'
     return result
 
-""" Decode json list """
 def _decode_list(data):
+    """ Decode json list """
     rv = []
     for item in data:
         if isinstance(item, unicode):
@@ -334,8 +333,8 @@ def _decode_list(data):
         rv.append(item)
     return rv
 
-""" Decode json dict """
 def _decode_dict(data):
+    """ Decode json dict """
     rv = {}
     for key, value in data.iteritems():
         if isinstance(key, unicode):
