@@ -116,7 +116,12 @@ def getCourseVerticalsScore(dict_course,cname,xblock_category):
                         items            = getCourseItems(dict_course,k.split('/')[::-1][0],xblock_category)
                         for item in items:
                             item_score = item['item_score']
-                            total_score += int(item_score)
+			    try:
+				    my_value = int(item_score)
+			    except TypeError:
+				    my_value = 0  # 
+
+                            total_score += my_value
     return total_score
 
 """

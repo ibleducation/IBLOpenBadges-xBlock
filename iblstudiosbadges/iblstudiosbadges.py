@@ -36,7 +36,7 @@ class IBLstudiosbadges(XBlock):
     debug_mode      = String(display_name="debug", default="0", scope=Scope.content, help="Enable debug mode")
 
     # badges provider data
-    claim_prov_url          = "http://iblstudiosbadges.iblstudios.com:5000"
+    claim_prov_url          = "http://vm6-cloud.iblstudios.com:5000"
     claim_prov_url_token    = claim_prov_url+'/api/token.php'
     claim_prov_url_list     = claim_prov_url+'/api/badgedata.php'
     claim_prov_url_claim    = claim_prov_url+'/api/claim_badge.php'
