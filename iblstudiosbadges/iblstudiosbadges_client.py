@@ -42,6 +42,7 @@ def get_auth_token (purl,pusr,ppwd):
     if purl!='' and pusr!='' and ppwd!='':
         res  = requests.post(purl, data=pdata, auth=(pusr,ppwd) )
         data = json.loads(res.content)
+        print data
         result = ''
         if data !='':
             for key,value in data.items():
