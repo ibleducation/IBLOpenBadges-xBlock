@@ -40,11 +40,6 @@ class IBLstudiosbadges(XBlock):
     debug_mode      = String(display_name="debug", default="0", scope=Scope.content, help="Enable debug mode")
 
     # badges provider data
-    claim_prov_url          = "http://127.0.0.1:80"
-    claim_prov_url_token    = claim_prov_url+'/api/token.php'
-    claim_prov_url_list     = claim_prov_url+'/api/badgedata.php'
-    claim_prov_url_claim    = claim_prov_url+'/api/claim_badge.php'
-    claim_prov_url_checkearn = claim_prov_url+'/api/checkearn.php'
     claim_prov_usr          = String(display_name="ProviderUSER", default="provider_user", scope=Scope.content, help="Badge provider user")
     claim_prov_pwd          = String(display_name="ProviderPass", default="provider_key_secret", scope=Scope.content, help="Badge provider pass")
 
@@ -64,17 +59,15 @@ class IBLstudiosbadges(XBlock):
     iblclient = None
 
     iblsettings = {
-        'module':'iblstudiosbadges.ibl_badges_client.IBLBadgesClient',
-        'base_url': "http://127.0.0.1:80",
+        'module':'iblstudiosbadges.BadgeOne_client.BadgeOneClient',
+        'base_url': "http://vm6-cloud.iblstudios.com:5000",
     }
 
     def __init__(self, *args, **kwargs):
-        print "yeaah!!"       
         self.iblclient = badges_client.BadgesClient(self.iblsettings['module'])
         self.iblclient.set_url(self.iblsettings["base_url"])
 
         super(IBLstudiosbadges, self).__init__(*args, **kwargs)
-        print "owhhhyea!"
 
 
     def resource_string(self, path):
@@ -86,7 +79,6 @@ class IBLstudiosbadges(XBlock):
     The primary view for the students
     """
     def student_view(self, context):
-        print "this is student view here"
         # Setup data to claim a badge
         self.n_user_id          = self.get_student_id()
         self.claim_db_user_data = self.DB_get_user_data()
@@ -260,7 +252,6 @@ class IBLstudiosbadges(XBlock):
 
     """ The primary view for Studio """
     def studio_view(self, context=None):
-        print "this is the view you"
         html = self.resource_string("static/html/studio_view_edit.html")
         frag = Fragment(html.format(self=self))
         frag.add_css(self.resource_string("static/css/style.css"))

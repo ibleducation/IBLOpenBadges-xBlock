@@ -3,17 +3,13 @@ import os
 import requests
 import json
 
-class IBLBadgesClient():
+class BadgeOneClient():
 
     claim_prov_url = None
     claim_prov_url_token    = '/api/token.php'
     claim_prov_url_list     = '/api/badgedata.php'
     claim_prov_url_claim    = '/api/claim_badge.php'
     claim_prov_url_checkearn = '/api/checkearn.php'
-
-
-    def __init__(self):
-        print "this is the impl"
 
     def set_url(self, url):
         self.claim_prov_url = url
@@ -37,8 +33,9 @@ class IBLBadgesClient():
         pdata = {'grant_type':'client_credentials'}
         if pusr!='' and ppwd!='':
             res  = requests.post(self.make_full_url(self.claim_prov_url_token), data=pdata, auth=(pusr,ppwd))
+            
             data = json.loads(res.content)
-            # print data
+            
             result = ''
             if data !='':
                 for key,value in data.items():
