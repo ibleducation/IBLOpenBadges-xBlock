@@ -24,7 +24,7 @@ General consultancy on the principles of open digital badges in education was pr
   Note: the absolute path is required, therefore remove the last `/` character at the end of the URL if it exists (e.g. http://domain.tld).
   Ports are allowed. e.g. http://domain.tld:5000
   
-  `claim_prov_url = "ABSOLUTE_PATH_URL_PROVIDER"`
+  `base_url = "ABSOLUTE_PATH_URL_PROVIDER"`
 
 * Set up the MySQL connection: `iblstudiosbadges.py`
   e.g. `mysql_database = 'edxapp'`, `mysql_user = 'root'`, `mysql_pwd = ''`
