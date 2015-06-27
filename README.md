@@ -4,8 +4,7 @@ IBL OpenBadges XBlock
 This is the XBlock to allow digital badges to be awarded from an online course using Open edX, which depends on [IBLOpenBadges-Server](https://github.com/iblstudios/IBLOpenBadges-Server).
 
 The Open Badges XBlock was developed by [IBL Studios](http://iblstudios.com/) with conceptual and feature design by Lorena A. Barba and Michael Amigot. It was used in Prof. Barba's open online course ["Practical Numerical Methods with Python"](http://openedx.seas.gwu.edu/courses/GW/MAE6286/2014_fall/about), starting on December 2014. 
-
-General consultancy on the principles of open digital badges in education was provided by [Prof. Daniel T. Hickey](http://remediatingassessment.blogspot.com/) and his team at Indiana University. The badges were awarded using the [IBLOpenBadges-Server](https://github.com/iblstudios/IBLOpenBadges-Server) platform. 
+General consultancy on the principles of open digital badges in education was provided by [Prof. Daniel T. Hickey](http://remediatingassessment.blogspot.com/) and his team at Indiana University during Fall 2014.
 
 ## Summary of features
 
