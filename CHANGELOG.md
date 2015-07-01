@@ -1,3 +1,7 @@
+## IBLOpenBadges-xBlock (0.9-2) master; urgency=low
+  * Released : 20150701
+  * Fixing def value getCourseVerticalsScore (item_score)
+
 ## IBLOpenBadges-xBlock (0.9-1) master; urgency=low
 
   * Released : 20150603
