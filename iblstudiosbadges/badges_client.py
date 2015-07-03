@@ -1,7 +1,11 @@
+
+
 from importlib import import_module
 
 class IBLOpenBadges:
-    """ Create a Badge Object """
+    """
+    Create a Badge Object
+    """
     def __init__(self, id):
         self.id = id
         self.name  = None
@@ -12,42 +16,91 @@ class IBLOpenBadges:
         self.image = None
 
 class BadgesClient():
-
+    """
+    This class includes methods and functions to perfom server transactions
+    """
     backend = None
 
-
-
     def __init__(self, backend):
-        backend_path = backend.split(".")
+        """
+        Constructor for BadgesClient's class
 
+        Arguments:
+            backend (str): Class path to the actual badge client to use
+        """
+
+        backend_path = backend.split(".")
         the_class = backend_path[-1]
         del(backend_path[-1])
-
         the_module = ".".join(backend_path)
-
         module = import_module(the_module)
         object_class = getattr(module,the_class)
-
-        #instantiate the object class, this is our actual connection object
-        #we're just an interface to it 
         self.backend = object_class()
-        
 
-    #next functions define the general interface to the awards server
     def build_badge_preview(self, obj_sel_badge):
+        """
+        Creates a badge preview object, with html
+
+        Arguments:
+            obj_sel_badge (obj): Badge data object from get_badge_data
+
+        Returns:
+            str: html preview for the badge
+
+        """
         return self.backend.build_badge_preview(obj_sel_badge)
 
     def set_url(self, url):
+        """
+        Set the basic url for this client
+
+        Arguments:
+            url (str): The server url
+
+        Returns:
+            str: The complete url string
+
+        """
+
         self.base_url = url
         self.backend.set_url(url)
 
     def get_auth_token(self, user, password):
+        """
+        Returns an auth token from the client
+
+        Arguments:
+            user (str): The user
+            password (str): The password
+
+        """
+
         return self.backend.get_auth_token(user,password)
 
     def get_badge_data(self, ptoken, bgid, datatype='info'):
+        """
+        Returns basic badge data
+
+        Arguments:
+            ptoken (str): Is the auth token returned via get_auth_token
+            bgid (int): Is the badge id
+            datatype (str): Is sent to the client to define the kind of requested data
+
+        """
+
         return self.backend.get_badge_data(ptoken, bgid, datatype)
 
     def check_earn_badge (self, ptoken, uemail, bgid):
+        """
+        Checks if the user earned the badge
+
+        Arguments:
+            ptoken (str):  Is the auth token returned via get_auth_token
+            uemail (str): Is the user email to validate
+            bgid (int): Is the badge id
+
+        """
+
         return self.backend.check_earn_badge(ptoken, uemail, bgid)
 
     def get_award_result(self, data2parse):
@@ -61,25 +114,23 @@ class BadgesClient():
 
     def set_form_data_to_award(self, app_form_data):
         return self.backend.set_form_data_to_award(app_form_data)
-        
+
     def claim_and_award_single_badge(self,token,award_data):
         return self.backend.claim_and_award_single_badge(token,award_data)
 
-
-    #this is a common function to create a badge object
     def create_obj_badge(self, jsondata,jsonparams):
         """
-        Create the object badge with retrieved data
-        
-        Keyword arguments:
-        jsondata -- the json badge data retrieved
-        jsonparams -- the json badge params (evidence) retrieved
+        Create the object badge with retrieved data (common function)
+
+        Arguments:
+            jsondata (obj): The json badge data retrieved
+            jsonparams (obj): The json badge params (evidence) retrieved
+
         """
+
         import json
-        # load data from json expected format data
         jsonData = json.loads(jsondata, object_hook=self._decode_dict)
         jsonParams = json.loads(jsonparams, object_hook=self._decode_dict)
-        # create a new badge object
         obj_Badge = []
         if 'bgid' in jsonData and jsonData.get('bgid')>0 :
             badgeid = jsonData.get('bgid')
@@ -90,7 +141,6 @@ class BadgesClient():
             b.institution = jsonData.get('institution').decode("utf8")
             b.image = jsonData.get('bgimage')
             b.evidences = []
-            # get params (evidence)
             if "success" in jsonParams:
                 if "params" in jsonParams:
                     b.evidences  = jsonParams.get('params')
@@ -98,7 +148,9 @@ class BadgesClient():
         return obj_Badge
 
     def _decode_list(self, data):
-        """ Decode json list """
+        """
+        Decode json list
+        """
         rv = []
         for item in data:
             if isinstance(item, unicode):
@@ -111,7 +163,9 @@ class BadgesClient():
         return rv
 
     def _decode_dict(self, data):
-        """ Decode json dict """
+        """
+        Decode json dict
+        """
         rv = {}
         for key, value in data.iteritems():
             if isinstance(key, unicode):
@@ -124,4 +178,3 @@ class BadgesClient():
                 value = self._decode_dict(value)
             rv[key] = value
         return rv
-
