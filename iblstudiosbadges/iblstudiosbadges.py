@@ -5,7 +5,6 @@ from xblock.fields import Scope, Integer, String
 from xblock.fragment import Fragment
 from xmodule.fields import RelativeTime
 
-# import iblstudiosbadges_client
 import edxappCourseData
 
 import badges_client

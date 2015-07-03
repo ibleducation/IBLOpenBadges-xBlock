@@ -1,3 +1,7 @@
+## IBLOpenBadges-xBlock (0.9-3) master; urgency=low
+  * Released : 20150703
+  * Remove old client sample file
+
 ## IBLOpenBadges-xBlock (0.9-2) master; urgency=low
   * Released : 20150701
   * Fixing def value getCourseVerticalsScore (item_score)
