@@ -256,10 +256,9 @@ class BadgeOneClient():
         """
         result =''
         if resultdata != 'error':
-            claim_uri = resultdata.replace('\/','/')
             result  ='<div style="color:green;">'
             result +="<h1 style='color:green;'>%s</h1>" % (congratulations)
-            result +='<div><a href="%s" target="_blank">%s</a></div>' % (claim_uri,claim_uri)
+            result +='<div><a href="%s" target="_blank">%s</a></div>' % (resultdata,resultdata)
             result +='</div>'
         else:
             result  ='<div style="color:red;">'
