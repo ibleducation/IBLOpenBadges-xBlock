@@ -43,7 +43,6 @@ class BadgeOneClient():
                         result = value
         return result
 
-
     def get_badge_data (self,ptoken,bgid,datatype='info'):
         """
         Retry badge information from external server
@@ -58,9 +57,6 @@ class BadgeOneClient():
         res = requests.post(self.make_full_url(self.claim_prov_url_list), data=pdata, headers=headers)
         return res.content
 
-
-
-
     def convert_dict2querystring(self, dict):
         """ Convert dict to query-string """
         import urllib
@@ -72,7 +68,6 @@ class BadgeOneClient():
             text+= str(i) + "=" + str(dict[i])
             count += 1
         return text
-
 
     def check_earn_badge (self,ptoken,uemail,bgid):
         """ 
@@ -176,6 +171,7 @@ class BadgeOneClient():
             f_claim_s_first_name = f_claim_full_name[0]
             if len(f_claim_full_name) > 1:
                     f_claim_s_last_name = f_claim_name[len(f_claim_s_first_name):]
+                    f_claim_s_last_name = f_claim_s_last_name.strip()
             else:
                     f_claim_s_last_name = '.'
         # Preview the badge to be claim
@@ -206,8 +202,7 @@ class BadgeOneClient():
         """
         import urllib
         #define vars
-        params      = {}
-        evidences   = ''
+        data_dict   = {}
         form        = app_form_data
         # decode some chars for evidences
         for k,v in form.iteritems():
@@ -217,14 +212,8 @@ class BadgeOneClient():
             v = v.replace('%40','@')
             k = k.replace('%7C','|')
             if v != 'None':
-                params[k] = v
-        # prepare querystring
-        data = ''
-        if params:
-            data = self.convert_dict2querystring(params)
-            if (data != ''):
-                data = ("%s") % (data)
-        return data
+                data_dict[k] = v
+        return data_dict
 
     def claim_and_award_single_badge(self,token,award_data):
         """
@@ -235,33 +224,10 @@ class BadgeOneClient():
         token -- the token auth
         award_data -- the formatted data retrieved from the form 
         """
-        # Form data must be provided already urlencoded.
-        # if you use urlencode import urllib
-        # postfields = urllib.urlencode(award_data)
-        postfields = str(award_data)
-        result = ''
-        if award_data != '':
-            # send data using pycurl
-            import pycurl
-            from StringIO import StringIO
-            #send curl data
-            c = pycurl.Curl()
-            c.setopt(c.URL, self.make_full_url(self.claim_prov_url_claim))
-            c.setopt(pycurl.HTTPHEADER, ['Accept: application/json','Authorization: Bearer %s' % str(token)])
-            c.setopt(pycurl.SSL_VERIFYPEER, 0)
-            c.setopt(pycurl.SSL_VERIFYHOST, 0)
-            c.setopt(c.POSTFIELDS, postfields)
-            buffer = StringIO()
-            # Be aware using python 2.7 and pycurl 7.19.3
-            # use WRITEFUNCTION instead WRITEDATA 
-            #version pycurl >= 7.19.3
-            #c.setopt(c.WRITEDATA, buffer)
-            # version pycurl <= 7.19.3
-            c.setopt(c.WRITEFUNCTION, buffer.write)
-            c.perform()
-            c.close()
-            result = buffer.getvalue()
-        return result
+        pdata = award_data
+        headers = {'Authorization' : 'Bearer '+token+'' }
+        res = requests.post(self.make_full_url(self.claim_prov_url_claim), data=pdata, headers=headers)
+        return res.content
 
     def get_award_result(self, data2parse):
         """
@@ -298,8 +264,6 @@ class BadgeOneClient():
             result +='<div><h1 style="color:red">Error: The award could not be created</h1></div>'
             result +='</div>'
         return result
-
-
 
     def _decode_list(self, data):
         """ Decode json list """

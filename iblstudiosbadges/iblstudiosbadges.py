@@ -274,7 +274,7 @@ class IBLstudiosbadges(XBlock):
             set_award_single = self.iblclient.claim_and_award_single_badge(self.claim_prov_access_token,award_data)
             # mode debug to get provider response
             if self.debug_mode == "1":
-                debug_result = award_data +'<hr>'+set_award_single
+                debug_result = set_award_single
                 return { 'result' : debug_result }
             # result from earn request
             award_result_prov = self.iblclient.get_award_result ( ast.literal_eval(set_award_single) )
