@@ -74,10 +74,11 @@ class IBLstudiosbadges(XBlock):
         data = pkg_resources.resource_string(__name__, path)
         return data.decode("utf8")
 
-    """
-    The primary view for the students
-    """
+
     def student_view(self, context):
+        """
+        The primary view for the students
+        """
         # Setup data to claim a badge
         self.n_user_id          = self.get_student_id()
         self.claim_db_user_data = self.DB_get_user_data()
@@ -107,17 +108,17 @@ class IBLstudiosbadges(XBlock):
             self.claim_prov_access_token = self.iblclient.get_auth_token(self.claim_prov_usr, self.claim_prov_pwd)
 
             if self.claim_prov_access_token !="":
-                
+
                 badge_info = self.iblclient.get_badge_data(self.claim_prov_access_token,self.bg_id,'info')
-                
+
 
 
                 badge_params = self.iblclient.get_badge_data(self.claim_prov_access_token,self.bg_id,'params')
-                
+
                 obj_badge = self.iblclient.create_obj_badge(badge_info,badge_params)
-                
+
                 self.check_earned = self.iblclient.check_earn_badge(self.claim_prov_access_token,self.claim_db_user_email,self.bg_id)
-                
+
                 self.preview_badge = self.iblclient.build_badge_preview(obj_badge)
                 if obj_badge :
 
@@ -125,10 +126,10 @@ class IBLstudiosbadges(XBlock):
                     if self.check_earned!='':
                         self.award_earn_prov = self.iblclient.get_award_result ( self.check_earned )
                         self.award_earned = self.iblclient.get_award_result_formatted(self.award_earn_prov,self.congratulations_text)
-                    
+
                     else:
                         self.claim_badge_form = self.iblclient.build_badge_form(self.claim_db_user_name,self.claim_db_user_email,self.form_text,obj_badge)
-                
+
                 else:
                     self.claim_badge_errors = 'Could not retrieve the information associated with the Badge ID selected. Please, verify your data.'
             else:
@@ -161,8 +162,10 @@ class IBLstudiosbadges(XBlock):
             frag.add_css(self.resource_string("static/css/style.css"))
         return frag
 
-    """ Get data from student_id """
     def get_student_id(self):
+        """
+         Get data from student_id
+        """
         if hasattr(self, "xmodule_runtime"):
             s_id = self.xmodule_runtime.anonymous_student_id
         else:
@@ -172,8 +175,10 @@ class IBLstudiosbadges(XBlock):
                 s_id = unicode(self.scope_ids.user_id)
         return s_id
 
-    """ Get student data from the DB """
     def DB_get_user_data(self):
+        """
+        Get student data from the DB
+        """
         # the appmysqldb module will only be used here
         import appmysqldb
 
@@ -249,8 +254,10 @@ class IBLstudiosbadges(XBlock):
         results = [user_id,course_id,user_name,user_email,user_score,badge_list_problems,badge_problems_score,badge_partial_user_score,badge_percent_user_score,badge_problems_score]
         return results
 
-    """ The primary view for Studio """
     def studio_view(self, context=None):
+        """
+        The primary view for Studio
+        """
         html = self.resource_string("static/html/studio_view_edit.html")
         frag = Fragment(html.format(self=self))
         frag.add_css(self.resource_string("static/css/style.css"))
@@ -258,9 +265,11 @@ class IBLstudiosbadges(XBlock):
         frag.initialize_js('StudentEditBadge')
         return frag
 
-    """ From student view claim and save a Badge """
     @XBlock.json_handler
     def student_claim_save(self,claimdata,suffix=''):
+        """
+        From student view claim and save a Badge
+        """
         # parse data to claim a badge
         # default value
         award_result = 'error'
@@ -281,9 +290,11 @@ class IBLstudiosbadges(XBlock):
             award_result = self.iblclient.get_award_result_formatted(award_result_prov,self.congratulations_text)
         return { 'result' :  award_result }
 
-    """ Configure provider information and xblock data """
     @XBlock.json_handler
     def studio_save(self, data, suffix=''):
+        """
+        Configure provider information and xblock data
+        """
         self.debug_mode = data['debug_mode']
         self.bg_id = data['bg_id']
         self.form_text = data['form_text']
@@ -294,9 +305,11 @@ class IBLstudiosbadges(XBlock):
         self.claim_prov_pwd = data['badge_pro_pwd']
         return { 'result': 'success' }
 
-    """A canned scenario for display in the workbench."""
     @staticmethod
     def workbench_scenarios():
+        """
+        A canned scenario for display in the workbench.
+        """
         return [
             ("IBLStudiosBadges",
             """<vertical_demo>

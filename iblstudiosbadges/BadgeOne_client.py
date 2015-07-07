@@ -24,7 +24,7 @@ class BadgeOneClient():
     def get_auth_token(self, pusr, ppwd):
         """
         Get Auth Token to authenticate transactions
-        
+
         Keyword arguments:
         pusr -- the username
         ppwd -- the secret_key
@@ -33,9 +33,9 @@ class BadgeOneClient():
         pdata = {'grant_type':'client_credentials'}
         if pusr!='' and ppwd!='':
             res  = requests.post(self.make_full_url(self.claim_prov_url_token), data=pdata, auth=(pusr,ppwd))
-            
+
             data = json.loads(res.content)
-            
+
             result = ''
             if data !='':
                 for key,value in data.items():
@@ -46,7 +46,7 @@ class BadgeOneClient():
     def get_badge_data (self,ptoken,bgid,datatype='info'):
         """
         Retry badge information from external server
-        
+
         Keyword arguments:
         ptoken -- the token auth
         bgid -- the badge id
@@ -58,7 +58,9 @@ class BadgeOneClient():
         return res.content
 
     def convert_dict2querystring(self, dict):
-        """ Convert dict to query-string """
+        """
+        Convert dict to query-string
+        """
         import urllib
         text = ''
         count = 0
@@ -70,9 +72,9 @@ class BadgeOneClient():
         return text
 
     def check_earn_badge (self,ptoken,uemail,bgid):
-        """ 
+        """
         Ask the server if the badge was earned before
-        
+
         Keyword arguments:
         ptoken -- the token auth
         uemail -- the user email
@@ -94,9 +96,9 @@ class BadgeOneClient():
     def build_evidences_form(self, data_evidences):
         """
         Build the html form tags for evidences
-        
+
         Keyword arguments:
-        data_evidences -- evaulated data from sever response 
+        data_evidences -- evaulated data from sever response
         """
         result = ''
         if data_evidences:
@@ -131,9 +133,9 @@ class BadgeOneClient():
     def build_badge_preview(self, obj_sel_badge):
         """
         Build the html to preview the badge to earn
-        
+
         Keyword arguments:
-        obj_sel_badge -- badge object 
+        obj_sel_badge -- badge object
         """
         view = ''
         if obj_sel_badge and obj_sel_badge[0].id > 0:
@@ -151,7 +153,7 @@ class BadgeOneClient():
     def build_badge_form(self, f_claim_name,f_claim_mail,f_form_text,obj_sel_badge):
         """
         Build the html form to claim a new badge
-        
+
         Keyword arguments:
         f_claim_name -- student complete name
         f_claim_mail -- student email
@@ -196,7 +198,7 @@ class BadgeOneClient():
         """
         Prepare data given in the claim form
         to send as querystring request to the server
-        
+
         Keyword arguments:
         app_form_data -- the data retrieved from the claim form
         """
@@ -219,10 +221,10 @@ class BadgeOneClient():
         """
         Claim a new badge
         sending form data to server
-        
+
         Keyword arguments:
         token -- the token auth
-        award_data -- the formatted data retrieved from the form 
+        award_data -- the formatted data retrieved from the form
         """
         pdata = award_data
         headers = {'Authorization' : 'Bearer '+token+'' }
@@ -231,7 +233,7 @@ class BadgeOneClient():
 
     def get_award_result(self, data2parse):
         """
-        Parse the json data retrieved 
+        Parse the json data retrieved
         server after claim a new badge
         and try to evaluate if was create.
         If badge_url param exists and is not empty
@@ -247,7 +249,7 @@ class BadgeOneClient():
     def get_award_result_formatted(self, resultdata,congratulations):
         """
         Print the result of a claimed badge
-        
+
         Keyword arguments:
         resultdata -- string with two possible results ('error' or the url of the earned badge)
         congratulations -- free text defined in studio view
@@ -266,7 +268,9 @@ class BadgeOneClient():
         return result
 
     def _decode_list(self, data):
-        """ Decode json list """
+        """
+        Decode json list
+        """
         rv = []
         for item in data:
             if isinstance(item, unicode):
@@ -279,7 +283,9 @@ class BadgeOneClient():
         return rv
 
     def _decode_dict(self, data):
-        """ Decode json dict """
+        """
+        Decode json dict
+        """
         rv = {}
         for key, value in data.iteritems():
             if isinstance(key, unicode):

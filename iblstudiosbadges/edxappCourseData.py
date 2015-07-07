@@ -10,8 +10,10 @@ from pymongo import Connection
         # subsection -> _id.category : sequential
             # problem -> _id.category : vertical
 
-""" Get data recursively """
 def getRecursiveData(data):
+    """
+    Get data recursively
+    """
     if isinstance(data, basestring):
         return str(data)
     elif isinstance(data, collections.Mapping):
@@ -21,8 +23,10 @@ def getRecursiveData(data):
     else:
         return data
 
-""" Get Chapters : sections """
 def getCourseChapters(dict_course,xblock_category):
+    """
+    Get Chapters : sections
+    """
     res_list = []
     if len(dict_course)>0:
         for i, v in enumerate(dict_course):
@@ -37,8 +41,10 @@ def getCourseChapters(dict_course,xblock_category):
                         res_list.append( {'category': 'chapter', 'module_id' : k, 'name' : k.split('/')[::-1][0], 'chapters': sequentials } )
     return res_list
 
-""" Get Sequentials : subsections """
 def getCourseSequentials(dict_course,cname,xblock_category):
+    """
+    Get Sequentials : subsections
+    """
     res_list = []
     if len(dict_course)>0:
         for i, v in enumerate(dict_course):
@@ -50,8 +56,10 @@ def getCourseSequentials(dict_course,cname,xblock_category):
                         res_list.append( {'category': 'sequential', 'module_id' : k, 'name' : k.split('/')[::-1][0], 'verticals': verticals } )
     return res_list
 
-""" Get Verticals : for group problems in subsection """
 def getCourseVerticals(dict_course,cname,xblock_category):
+    """
+    Get Verticals : for group problems in subsection
+    """
     res_list = []
     if len(dict_course)>0:
         for i, v in enumerate(dict_course):
@@ -65,11 +73,11 @@ def getCourseVerticals(dict_course,cname,xblock_category):
                         res_list.append( {'category': 'vertical', 'module_id' : k, 'name' : k.split('/')[::-1][0], 'items': items , 'total_score': total_score} )
     return res_list
 
-"""
-Get Items : last level
-filter: problems and category_badges
-"""
 def getCourseItems(dict_course,cname,xblock_category):
+    """
+    Get Items : last level
+    filter: problems and category_badges
+    """
     res_list = []
     badge_id = 0
     item_score = 0
@@ -102,8 +110,10 @@ def getCourseItems(dict_course,cname,xblock_category):
                                         res_list.append( {'category': category, 'module_id' : k, 'name' : item_name,'badge_id': badge_id, 'item_score': item_score } )
     return res_list
 
-""" Get Verticals Score : total subsections """
 def getCourseVerticalsScore(dict_course,cname,xblock_category):
+    """
+    Get Verticals Score : total subsections
+    """
     res_list = []
     total_score = 0
     if len(dict_course)>0:
@@ -123,11 +133,11 @@ def getCourseVerticalsScore(dict_course,cname,xblock_category):
                             total_score += int(item_score)
     return total_score
 
-"""
-Get all data from mongo database
-for the given course as a dictionary
-"""
 def getDictCompleteCourseData(conn,course_id,xblock_category):
+    """
+    Get all data from mongo database
+    for the given course as a dictionary
+    """
     course = setParseCourseId(course_id)
     dict_course = []
     if course!='':
@@ -140,11 +150,11 @@ def getDictCompleteCourseData(conn,course_id,xblock_category):
                 dict_course.append( getRecursiveData(item) )
     return dict_course
 
-"""
-Get a complete list of problems
-for the given course_id
-"""
 def getCompleteListProblems(conn,course_id,xblock_category):
+    """
+    Get a complete list of problems
+    for the given course_id
+    """
     result_dict = []
     dict_course = getDictCompleteCourseData(conn,course_id,xblock_category)
     if len(dict_course)>0:
@@ -166,8 +176,10 @@ def getCompleteListProblems(conn,course_id,xblock_category):
                         result_dict.append(data_list)
     return result_dict
 
-""" Parse course_id name """
 def setParseCourseId(course_id):
+    """
+    Parse course_id name
+    """
     if course_id !='' and course_id !='None':
         course  = course_id.split('/')
         corg= course[0]
@@ -178,8 +190,10 @@ def setParseCourseId(course_id):
         else:
             return ''
 
-""" Get a complete list of problems for a given badge id """
 def getListProblemsFromBadgeId(conn,badge_id,course_id,xblock_category):
+    """
+    Get a complete list of problems for a given badge id
+    """
     chapter_module_id =''
     problems_list     =[]
     if course_id!='' and course_id!='None' and badge_id!='' and badge_id!='None':
@@ -195,8 +209,10 @@ def getListProblemsFromBadgeId(conn,badge_id,course_id,xblock_category):
                     problems_list.append({ 'problem_id':p['item_module_id'], 'problem_score':p['item_score'] } )
     return problems_list
 
-""" Get the score from a given course and badge """
 def getScoreFromBadgeId(conn,badge_id,course_id,xblock_category):
+    """
+    Get the score from a given course and badge
+    """
     score = '0'
     problems_list=[]
     if course_id!='' and course_id!='None' and badge_id!='' and badge_id!='None':
