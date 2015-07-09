@@ -1,3 +1,5 @@
+
+
 import sys, os
 import collections
 
@@ -205,7 +207,6 @@ def getListProblemsFromBadgeId(conn,badge_id,course_id,xblock_category):
         if chapter_module_id !='':
             for p in dict_course:
                 if p['chapter_module_id'] == chapter_module_id:
-                    #print ('%s : %s') % (p['item_module_id'],p['item_score'])
                     problems_list.append({ 'problem_id':p['item_module_id'], 'problem_score':p['item_score'] } )
     return problems_list
 

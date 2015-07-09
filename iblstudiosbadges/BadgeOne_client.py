@@ -1,10 +1,14 @@
+
+
 import sys
 import os
 import requests
 import json
 
 class BadgeOneClient():
-
+    """
+    BadgeOneClient Class
+    """
     claim_prov_url = None
     claim_prov_url_token    = '/api/token.php'
     claim_prov_url_list     = '/api/badgedata.php'
@@ -14,20 +18,27 @@ class BadgeOneClient():
     def set_url(self, url):
         self.claim_prov_url = url
 
-
     def make_full_url(self, url):
         """
-        Join base url and the url path we need.
+        Join base url and the url path we need
+
+        Arguments:
+            url (str): Is the partial url
+
+        Returns:
+            str: The complete url string
+
         """
         return "%s%s" % ( self.claim_prov_url, url)
 
     def get_auth_token(self, pusr, ppwd):
         """
-        Get Auth Token to authenticate transactions
+        Get Auth Token from sever to authenticate transactions
 
-        Keyword arguments:
-        pusr -- the username
-        ppwd -- the secret_key
+        Arguments:
+            pusr (str): The user
+            ppwd (str): The password
+
         """
         result = ''
         pdata = {'grant_type':'client_credentials'}
@@ -47,44 +58,33 @@ class BadgeOneClient():
         """
         Retry badge information from external server
 
-        Keyword arguments:
-        ptoken -- the token auth
-        bgid -- the badge id
-        datatype -- the type of data to retry (default info)
+        Arguments:
+            ptoken (str):  Is the auth token returned via get_auth_token
+            bgid (int): Is the badge id
+            datatype (str): Is sent to define the kind of requested data
+
         """
         pdata = {'bgid':bgid,'datatype':datatype}
         headers = {'Authorization' : 'Bearer '+ptoken+'' }
         res = requests.post(self.make_full_url(self.claim_prov_url_list), data=pdata, headers=headers)
         return res.content
 
-    def convert_dict2querystring(self, dict):
-        """
-        Convert dict to query-string
-        """
-        import urllib
-        text = ''
-        count = 0
-        for i in dict:
-            if count > 0:
-                text+= "&"
-            text+= str(i) + "=" + str(dict[i])
-            count += 1
-        return text
-
     def check_earn_badge (self,ptoken,uemail,bgid):
         """
         Ask the server if the badge was earned before
 
-        Keyword arguments:
-        ptoken -- the token auth
-        uemail -- the user email
-        bgid -- the badge id
+        Arguments:
+            ptoken (str):  Is the auth token returned via get_auth_token
+            uemail (str): Is the user email to validate
+            bgid (int): Is the badge id
+
         """
+
         import json
         pdata   = {'email':uemail, 'id':bgid}
         headers = {'Authorization' : 'Bearer '+ptoken+'' }
         res     = requests.post(self.make_full_url(self.claim_prov_url_checkearn), data=pdata, headers=headers)
-        data    = json.loads(res.content, object_hook=self._decode_dict)
+        data    = json.loads(res.content, object_hook=self._auto_encode_dict)
         result = ''
         if data!='':
             for key,value in data.iteritems():
@@ -92,14 +92,15 @@ class BadgeOneClient():
                     return data
         return result
 
-
     def build_evidences_form(self, data_evidences):
         """
         Build the html form tags for evidences
 
-        Keyword arguments:
-        data_evidences -- evaulated data from sever response
+        Arguments:
+            data_evidences (obj): Evaulated data from sever response
+
         """
+
         result = ''
         if data_evidences:
             for evidence in data_evidences:
@@ -128,15 +129,15 @@ class BadgeOneClient():
                     result +='</tr><tr><td>&#160;</td></tr>'
         return result
 
-
-
     def build_badge_preview(self, obj_sel_badge):
         """
         Build the html to preview the badge to earn
 
-        Keyword arguments:
-        obj_sel_badge -- badge object
+        Arguments:
+            obj_sel_badge (obj): Badge object
+
         """
+
         view = ''
         if obj_sel_badge and obj_sel_badge[0].id > 0:
             view  = "<table cellpadding=4 cellspacing=4 style='border:solid 1px #333;'>"
@@ -154,12 +155,14 @@ class BadgeOneClient():
         """
         Build the html form to claim a new badge
 
-        Keyword arguments:
-        f_claim_name -- student complete name
-        f_claim_mail -- student email
-        f_form_text -- label description to present the form
-        obj_sel_badge -- badge object
+        Arguments:
+            f_claim_name (str): Student complete name
+            f_claim_mail (str): Student email
+            f_form_text (str): Label description to present the form
+            obj_sel_badge (obj): Badge object
+
         """
+
         if obj_sel_badge[0].id > 0:
             # get params (evidence) and construct html
             if obj_sel_badge[0].evidences:
@@ -199,8 +202,8 @@ class BadgeOneClient():
         Prepare data given in the claim form
         to send as querystring request to the server
 
-        Keyword arguments:
-        app_form_data -- the data retrieved from the claim form
+        Arguments:
+            app_form_data (obj) : The data retrieved from the claim form
         """
         import urllib
         #define vars
@@ -219,12 +222,12 @@ class BadgeOneClient():
 
     def claim_and_award_single_badge(self,token,award_data):
         """
-        Claim a new badge
-        sending form data to server
+        Claim a new badge sending form data to server
 
-        Keyword arguments:
-        token -- the token auth
-        award_data -- the formatted data retrieved from the form
+        Arguments:
+            token (str): Is the auth token returned via get_auth_token
+            award_data (obj): The formatted data retrieved from the form
+
         """
         pdata = award_data
         headers = {'Authorization' : 'Bearer '+token+'' }
@@ -233,27 +236,37 @@ class BadgeOneClient():
 
     def get_award_result(self, data2parse):
         """
-        Parse the json data retrieved
-        server after claim a new badge
+        Parse the json data retrieved server after claim a new badge
         and try to evaluate if was create.
-        If badge_url param exists and is not empty
-        the badge was earned successfully
+        If badge_url param exists and is not empty the badge 
+        was earned successfully
+
+        Arguments:
+            data2parse (obj): The data retrieved from server 
+
+        Returns:
+            str: Complete path (url) for awarded badge
+
         """
+
         result = 'error'
         if data2parse != '':
             for key,val in data2parse.iteritems():
                 if key == "badge_url":
-                    return val
+                    badge_url = self._reverse_solidus_chars(val)
+                    return badge_url
         return result
 
     def get_award_result_formatted(self, resultdata,congratulations):
         """
         Print the result of a claimed badge
 
-        Keyword arguments:
-        resultdata -- string with two possible results ('error' or the url of the earned badge)
-        congratulations -- free text defined in studio view
+        Arguments:
+            resultdata (str): Results ('error' or the url of the earned badge)
+            congratulations (str): Free text defined in studio view
+
         """
+
         result =''
         if resultdata != 'error':
             result  ='<div style="color:green;">'
@@ -266,25 +279,66 @@ class BadgeOneClient():
             result +='</div>'
         return result
 
-    def _decode_list(self, data):
+    def _reverse_solidus_chars(self, data):
         """
-        Decode json list
+        Escaping the reverse-solidus character ("/", slash) 
+        is optional in JSON.
+        Some servers and some old languages will return "\/" instead "/".
+
+        Arguments:
+            data (str): String to be treated
+            
+        Returns:
+            str: String with reversed slashes
         """
+
+        return data.replace('\/','/')
+
+    def _auto_encode_list(self, data):
+        """
+        Evaluates if data is a list (default expected) or dict
+        In case is a dict calls _auto_encode_dict
+        Goes on recursively to ensure every item is encoded 
+        correctly in UTF8 and construct an new dict without recursive data.
+        Useful when data comes from external sources and you expect
+        a non recursive result.
+
+        Arguments:
+            data (list): Expects a list, else calls _auto_encode_list
+
+        Returns:
+            list: With encoded items
+
+        """
+
         rv = []
         for item in data:
             if isinstance(item, unicode):
                 item = item.encode('utf-8')
             elif isinstance(item, list):
-                item = self._decode_list(item)
+                item = self._auto_encode_list(item)
             elif isinstance(item, dict):
-                item = self._decode_dict(item)
+                item = self._auto_encode_dict(item)
             rv.append(item)
         return rv
 
-    def _decode_dict(self, data):
+    def _auto_encode_dict(self, data):
         """
-        Decode json dict
+        Evaluates if data is a dict (default expected) or list
+        In case is a list calls _auto_encode_list
+        Goes on recursively to ensure every item is encoded 
+        correctly in UTF8 and construct an new dict without recursive data.
+        Useful when data comes from external sources and you expect
+        a non recursive result.
+
+        Arguments:
+            data (dict): Expects a dict, else calls _auto_encode_list
+
+        Returns:
+            dict: With encoded items
+
         """
+
         rv = {}
         for key, value in data.iteritems():
             if isinstance(key, unicode):
@@ -292,8 +346,8 @@ class BadgeOneClient():
             if isinstance(value, unicode):
                 value = value.encode('utf-8')
             elif isinstance(value, list):
-                value = self._decode_list(value)
+                value = self._auto_encode_list(value)
             elif isinstance(value, dict):
-                value = self._decode_dict(value)
+                value = self._auto_encode_dict(value)
             rv[key] = value
         return rv
