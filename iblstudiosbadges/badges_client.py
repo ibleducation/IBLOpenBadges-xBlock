@@ -23,10 +23,11 @@ class BadgesClient():
 
     def __init__(self, backend):
         """
-        Constructor for BadgesClient's class
+        Constructor for BadgesClient's Class
 
         Arguments:
             backend (str): Class path to the actual badge client to use
+
         """
 
         backend_path = backend.split(".")
@@ -84,7 +85,7 @@ class BadgesClient():
         Arguments:
             ptoken (str): Is the auth token returned via get_auth_token
             bgid (int): Is the badge id
-            datatype (str): Is sent to the client to define the kind of requested data
+            datatype (str): Is sent to define the kind of requested data
 
         """
 
@@ -129,8 +130,8 @@ class BadgesClient():
         """
 
         import json
-        jsonData = json.loads(jsondata, object_hook=self._decode_dict)
-        jsonParams = json.loads(jsonparams, object_hook=self._decode_dict)
+        jsonData = json.loads(jsondata, object_hook=self._auto_encode_dict)
+        jsonParams = json.loads(jsonparams, object_hook=self._auto_encode_dict)
         obj_Badge = []
         if 'bgid' in jsonData and jsonData.get('bgid')>0 :
             badgeid = jsonData.get('bgid')
@@ -147,25 +148,51 @@ class BadgesClient():
             obj_Badge.append(b)
         return obj_Badge
 
-    def _decode_list(self, data):
+    def _auto_encode_list(self, data):
         """
-        Decode json list
+        Evaluates if data is a list (default expected) or dict
+        In case is a dict calls _auto_encode_dict
+        Goes on recursively to ensure every item is encoded 
+        correctly in UTF8 and construct an new dict without recursive data.
+        Useful when data comes from external sources and you expect
+        a non recursive result.
+
+        Arguments:
+            data (list): Expects a list, else calls _auto_encode_list
+
+        Returns:
+            list: With encoded items
+
         """
+
         rv = []
         for item in data:
             if isinstance(item, unicode):
                 item = item.encode('utf-8')
             elif isinstance(item, list):
-                item = self._decode_list(item)
+                item = self._auto_encode_list(item)
             elif isinstance(item, dict):
-                item = self._decode_dict(item)
+                item = self._auto_encode_dict(item)
             rv.append(item)
         return rv
 
-    def _decode_dict(self, data):
+    def _auto_encode_dict(self, data):
         """
-        Decode json dict
+        Evaluates if data is a dict (default expected) or list
+        In case is a list calls _auto_encode_list
+        Goes on recursively to ensure every item is encoded 
+        correctly in UTF8 and construct an new dict without recursive data.
+        Useful when data comes from external sources and you expect
+        a non recursive result.
+
+        Arguments:
+            data (dict): Expects a dict, else calls _auto_encode_list
+
+        Returns:
+            dict: With encoded items
+
         """
+
         rv = {}
         for key, value in data.iteritems():
             if isinstance(key, unicode):
@@ -173,8 +200,8 @@ class BadgesClient():
             if isinstance(value, unicode):
                 value = value.encode('utf-8')
             elif isinstance(value, list):
-                value = self._decode_list(value)
+                value = self._auto_encode_list(value)
             elif isinstance(value, dict):
-                value = self._decode_dict(value)
+                value = self._auto_encode_dict(value)
             rv[key] = value
         return rv

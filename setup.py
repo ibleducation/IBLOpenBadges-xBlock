@@ -1,4 +1,6 @@
-"""Setup for iblstudiosbadges XBlock."""
+"""
+Setup for iblstudiosbadges XBlock.
+"""
 
 import os
 from setuptools import setup
