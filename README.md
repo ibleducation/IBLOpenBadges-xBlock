@@ -19,7 +19,7 @@ General consultancy on the principles of open digital badges in education was pr
 * [IBLOpenBadges-Server](https://github.com/iblstudios/IBLOpenBadges-Server) platform.
 
 ###Install:
-* Edit `BadgeOne_client.py` and set up the `claim_prov_url` variable with the URL where the badges server is located.
+* Edit `iblstudiosbadges.py` and set up the `claim_prov_url` variable with the URL where the badges server is located.
   Note: the absolute path is required, therefore remove the last `/` character at the end of the URL if it exists (e.g. http://domain.tld).
   Ports are allowed. e.g. http://domain.tld:5000
   
