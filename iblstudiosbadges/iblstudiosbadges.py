@@ -274,6 +274,7 @@ class IBLstudiosbadges(XBlock):
         self.required_score = data['required_score']
         self.claim_prov_usr = data['badge_pro_user']
         self.claim_prov_pwd = data['badge_pro_pwd']
+        self.display_name = data['badge_display_name']
         return { 'result': 'success' }
 
     @staticmethod
