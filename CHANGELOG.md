@@ -1,3 +1,7 @@
+## IBLOpenBadges-xBlock (0.10) prerelease-2.0; urgency=low
+  * Released : 20161026
+  * Compatible version for new courses (course-v1)
+
 ## IBLOpenBadges-xBlock (0.9-3) master; urgency=low
   * Released : 20150703
   * Remove old client sample file
